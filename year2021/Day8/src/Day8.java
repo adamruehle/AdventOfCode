@@ -1,5 +1,12 @@
 public class Day8 {
 
+	public static String difference(String a, String b) {
+		for (int i = 0; i < b.length(); i++) {
+			a = a.replaceAll(b.substring(i, i + 1), "");
+		}
+		return a;
+	}
+
 	public static String[] bubbleSort(String[] inputs) {
 		String[] output = new String[inputs.length];
 		boolean sorted = true;
@@ -25,15 +32,6 @@ public class Day8 {
 			output[k] = eachOutput;
 			k++;
 		}
-		return output;
-	}
-
-	public static char oneAndSeven(String s1, String s2) {
-		char output = Character.MIN_VALUE;
-		if (s1.length() == 3) {
-
-		}
-
 		return output;
 	}
 
@@ -275,18 +273,22 @@ public class Day8 {
 			char sixth = Character.MIN_VALUE; // .........|...|
 			char seventh = Character.MIN_VALUE; // ....7th.---
 
-			String secondP = "";
-			String thirdP = "";
-			String fourthP = "";
-			String fifthP = "";
-			String sixthP = "";
-			String seventhP = "";
+			//Arrays to hold 5 length and 6 length digits
+			String[] fiveLetters = new String[3];
+			String[] sixLetters = new String[3];
 
-			// Four easy digits
+			String zero = "";
 			String one = "";
+			String two = "";
+			String three = "";
 			String four = "";
+			String five = "";
+			String six = "";
 			String seven = "";
 			String eight = "abcdefg";
+			String nine = "";
+			int l = 0;
+			int m = 0;
 			for (String input : inputs) {
 				// Assign the four easy digits their correct character sequences.
 				if (input.length() == 2) {
@@ -295,13 +297,78 @@ public class Day8 {
 					seven = input;
 				} else if (input.length() == 4) {
 					four = input;
+				} else if (input.length() == 5) {
+					fiveLetters[l] = input;
+					l++;
+				} else if (input.length() == 6) {
+					sixLetters[m] = input;
+					m++;
 				}
 			}
-			first = oneAndSeven(one, seven);
-			System.out.println(first);
+			//Figure out the values
+			first = difference(seven, one).charAt(0);
+			for (String str : sixLetters) {
+				String dif = difference(str, one);
+				if (dif.length() == 5) {
+					six = str;
+					third = difference(one, str).charAt(0);
+					sixth = difference(one, difference(one, str)).charAt(0);
+					break;
+				}
+			}
+			for (String str : sixLetters) {
+				String dif = difference(str, four);
+				if (dif.length() == 3 && str != six) {
+					zero = str;
+					fourth =  difference(eight, str).charAt(0);
+				} else if (dif.length() == 2 ) {
+					nine = str;
+				}
+			}
+			fifth = difference(zero, nine).charAt(0);
+			seventh = difference(difference(nine, seven), four).charAt(0);
+			second = difference(difference(four, one), "" + fourth).charAt(0);
+
+			two = "" + first + third + fourth + fifth + seventh;
+			three = "" + first + third + fourth + sixth + seventh;
+			five = "" + first + second + fourth + sixth + seventh;
+			String[] left = new String[] {two, three, five};
+			left = bubbleSort(left);
+			two = left[0];
+			three = left[1];
+			five = left[2];
+
+			//Now I know what all corresponding sets of characters are.
+			String digit = "";
+			for (String output : outputs) {
+				if (output.equals(zero)) {
+					digit += '0';
+				} else if (output.equals(one)) {
+					digit += '1';
+				} else if (output.equals(two)) {
+					digit += '2';
+				} else if (output.equals(three)) {
+					digit += '3';
+				} else if (output.equals(four)) {
+					digit += '4';
+				} else if (output.equals(five)) {
+					digit += '5';
+				} else if (output.equals(six)) {
+					digit += '6';
+				} else if (output.equals(seven)) {
+					digit += '7';
+				} else if (output.equals(eight)) {
+					digit += '8';
+				} else if (output.equals(nine)) {
+					digit += '9';
+				}
+			}
+
+			int output = Integer.parseInt(digit,0, 4, 10);
+			totalDigitsOutput += output;
 		}
 
-		System.out.println("count: " + count);
-		System.out.println("Total sum of all digit outputs: " + totalDigitsOutput);
+		System.out.println("\nPart 1 count: " + count);
+		System.out.println("Part 2: Total sum of all digit outputs: " + totalDigitsOutput);
 	}
 }
